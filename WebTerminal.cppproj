@@ -180,8 +180,8 @@
     <VMSETTING_IncludePaths>C:/Program Files (x86)/Arduino/libraries;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries;C:/Users/Kostya/Documents/Arduino/libraries;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/libb64;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/spiffs;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/umm_malloc;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/variants/generic;../../../WebTerminal;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/tools/sdk/include;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/tools/sdk/lwip/include;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/tools/sdk/libc/xtensa-lx106-elf/include;C:/Users/Kostya/AppData/Local/Temp/VMBuilds/WebTerminal/esp8266_generic/Release/core;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2/xtensa-lx106-elf/include/c++/4.8.2;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2/xtensa-lx106-elf/include/c++/4.8.2/xtensa-lx106-elf;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2/xtensa-lx106-elf/include;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2/lib/gcc/xtensa-lx106-elf/4.8.2/include;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/tools/sdk/lwip2/include;C:/Users/Kostya/Documents/Arduino/libraries/ESPAsyncTCP-master/src;C:/Users/Kostya/Documents/Arduino/libraries/ESPAsyncWebServer-master/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/Hash/src;{build.path}/core;C:/Users/Kostya/Documents/Arduino/libraries/ArduinoJson/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/DNSServer/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266HTTPUpdateServer/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266httpUpdate/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266HTTPClient/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src;C:/Users/Kostya/Documents/Arduino/libraries/Rtc_by_Makuna/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/Wire;C:/Users/Kostya/AppData/Local/Temp/VMBuilds/WebTerminal/esp8266_generic/Debug/core;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/variants/d1_mini;C:/Users/Kostya/AppData/Local/Temp/VMBuilds/WebTerminal/esp8266_d1_mini_pro/Release/core;</VMSETTING_IncludePaths>
     <VisualMicroSettings>
       <VisualMicroSettings>
-        <custom_esp8266_generic_FlashSize>16M15M</custom_esp8266_generic_FlashSize>
-        <arduino.upload.port>COM8</arduino.upload.port>
+        <custom_esp8266_generic_FlashSize>1M64</custom_esp8266_generic_FlashSize>
+        <arduino.upload.port>COM3</arduino.upload.port>
         <custom_esp8266_generic_UploadSpeed>921600</custom_esp8266_generic_UploadSpeed>
         <custom_esp8266_generic_Debug>Disabled</custom_esp8266_generic_Debug>
         <arduino.board.name>esp8266_generic</arduino.board.name>
@@ -665,10 +665,10 @@ build.arch=ESP8266
         <custom_esp8266_d1_mini_pro_FlashErase>none</custom_esp8266_d1_mini_pro_FlashErase>
         <custom_esp8266_d1_mini_pro_LwIPVariant>v2mss536</custom_esp8266_d1_mini_pro_LwIPVariant>
         <custom_esp8266_d1_mini_pro_CpuFrequency>160</custom_esp8266_d1_mini_pro_CpuFrequency>
-        <custom_esp8266_generic_CpuFrequency>160</custom_esp8266_generic_CpuFrequency>
+        <custom_esp8266_generic_CpuFrequency>80</custom_esp8266_generic_CpuFrequency>
         <custom_esp8266_generic_CrystalFreq>26</custom_esp8266_generic_CrystalFreq>
-        <custom_esp8266_generic_FlashMode>qio</custom_esp8266_generic_FlashMode>
-        <custom_esp8266_generic_FlashFreq>80</custom_esp8266_generic_FlashFreq>
+        <custom_esp8266_generic_FlashMode>dio</custom_esp8266_generic_FlashMode>
+        <custom_esp8266_generic_FlashFreq>40</custom_esp8266_generic_FlashFreq>
       </VisualMicroSettings>
     </VisualMicroSettings>
   </PropertyGroup>
@@ -811,8 +811,8 @@ build.arch=ESP8266
     <VMSETTING_IncludePaths>C:/Program Files (x86)/Arduino/libraries;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries;C:/Users/Kostya/Documents/Arduino/libraries;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/libb64;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/spiffs;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/cores/esp8266/umm_malloc;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/variants/generic;../../../WebTerminal;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/tools/sdk/include;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/tools/sdk/lwip/include;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/tools/sdk/libc/xtensa-lx106-elf/include;C:/Users/Kostya/AppData/Local/Temp/VMBuilds/WebTerminal/esp8266_generic/Release/core;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2/xtensa-lx106-elf/include/c++/4.8.2;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2/xtensa-lx106-elf/include/c++/4.8.2/xtensa-lx106-elf;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2/xtensa-lx106-elf/include;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2/lib/gcc/xtensa-lx106-elf/4.8.2/include;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/tools/sdk/lwip2/include;C:/Users/Kostya/Documents/Arduino/libraries/ESPAsyncTCP-master/src;C:/Users/Kostya/Documents/Arduino/libraries/ESPAsyncWebServer-master/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WiFi/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/Hash/src;{build.path}/core;C:/Users/Kostya/Documents/Arduino/libraries/ArduinoJson/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/DNSServer/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266HTTPUpdateServer/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266httpUpdate/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266HTTPClient/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/ESP8266WebServer/src;C:/Users/Kostya/Documents/Arduino/libraries/Rtc_by_Makuna/src;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/libraries/Wire;C:/Users/Kostya/AppData/Local/Temp/VMBuilds/WebTerminal/esp8266_generic/Debug/core;C:/Users/Kostya/AppData/Local/arduino15/packages/esp8266/hardware/esp8266/2.4.1/variants/d1_mini;C:/Users/Kostya/AppData/Local/Temp/VMBuilds/WebTerminal/esp8266_d1_mini_pro/Release/core;</VMSETTING_IncludePaths>
     <VisualMicroSettings>
       <VisualMicroSettings>
-        <custom_esp8266_generic_FlashSize>16M15M</custom_esp8266_generic_FlashSize>
-        <arduino.upload.port>COM8</arduino.upload.port>
+        <custom_esp8266_generic_FlashSize>1M64</custom_esp8266_generic_FlashSize>
+        <arduino.upload.port>COM3</arduino.upload.port>
         <custom_esp8266_generic_UploadSpeed>921600</custom_esp8266_generic_UploadSpeed>
         <custom_esp8266_generic_Debug>Disabled</custom_esp8266_generic_Debug>
         <arduino.board.name>esp8266_generic</arduino.board.name>
@@ -1296,10 +1296,10 @@ build.arch=ESP8266
         <custom_esp8266_d1_mini_pro_FlashErase>none</custom_esp8266_d1_mini_pro_FlashErase>
         <custom_esp8266_d1_mini_pro_LwIPVariant>v2mss536</custom_esp8266_d1_mini_pro_LwIPVariant>
         <custom_esp8266_d1_mini_pro_CpuFrequency>160</custom_esp8266_d1_mini_pro_CpuFrequency>
-        <custom_esp8266_generic_CpuFrequency>160</custom_esp8266_generic_CpuFrequency>
+        <custom_esp8266_generic_CpuFrequency>80</custom_esp8266_generic_CpuFrequency>
         <custom_esp8266_generic_CrystalFreq>26</custom_esp8266_generic_CrystalFreq>
-        <custom_esp8266_generic_FlashMode>qio</custom_esp8266_generic_FlashMode>
-        <custom_esp8266_generic_FlashFreq>80</custom_esp8266_generic_FlashFreq>
+        <custom_esp8266_generic_FlashMode>dio</custom_esp8266_generic_FlashMode>
+        <custom_esp8266_generic_FlashFreq>40</custom_esp8266_generic_FlashFreq>
       </VisualMicroSettings>
     </VisualMicroSettings>
   </PropertyGroup>

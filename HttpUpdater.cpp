@@ -1,7 +1,6 @@
 ﻿#include <Arduino.h>
 #include <WiFiClient.h>
 #include <WiFiServer.h>
-//#include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
 #include <ESP8266httpUpdate.h>
 #include <WiFiUdp.h>
@@ -12,12 +11,7 @@ extern "C" uint32_t _SPIFFS_end;
 #include "StreamString.h"
 #include "Core.h"
 #include "HttpUpdater.h"
-//#include "tools.h"
 #include "Version.h"
-
-
-//HttpUpdaterClass httpUpdater;
-
 
 HttpUpdaterClass::HttpUpdaterClass(const String& username, const String& password)
 :_username(username),_password(password),_authenticated(false)

@@ -4,7 +4,7 @@ using namespace std;
 using namespace std::placeholders;
 
 void ScalesClass::init(){
-	onRun(bind(&ScalesClass::fetchWeight, SCALES));
+	onRun(bind(&ScalesClass::fetchWeight, this));
 	reset();
 	_downloadValue();
 	mathRound();
@@ -37,7 +37,7 @@ void ScalesClass::init(){
 		tare();
 		request->send(204, "text/html", "");
 	});
-	_server->on("/sl", bind(&ScalesClass::handleSeal, SCALES, _1));																/* Опломбировать */
+	_server->on("/sl", bind(&ScalesClass::handleSeal, this, _1));																/* Опломбировать */
 }
 
 void ScalesClass::fetchWeight(){
@@ -241,7 +241,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
 			size_t lengh = SCALES->doData(json);							
 			AsyncWebSocketMessageBuffer * buffer = webSocket.makeBuffer(lengh);
 			if (buffer) {
-				json.printTo((char *)buffer->get(), len + 1);
+				json.printTo((char *)buffer->get(), lengh + 1);
 				if (client) {
 					client->text(buffer);
 				}

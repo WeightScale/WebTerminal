@@ -18,8 +18,7 @@ template<class T> class ExponentialFilter{
 
 	// Current filtered value.
 	T m_Current;
-
-	public:
+	public:		
 	ExponentialFilter() : m_WeightNew(100), m_Current(0){}
 	ExponentialFilter(T WeightNew, T Initial) : m_WeightNew(WeightNew), m_Current(Initial){}
 
@@ -41,14 +40,13 @@ template<class T> class ExponentialFilter{
 };
 
 class HX711 : public ExponentialFilter<long> {
-	private:
-		
+	protected:		
 		byte PD_SCK;	// Power Down and Serial Clock Input Pin
 		byte DOUT;		// Serial Data Output Pin
 		byte GAIN;		// amplification factor				
 		bool pinsConfigured;
 
-	public:
+	public:	
 		// define clock and data pin, channel, and gain factor
 		// channel selection is made by passing the appropriate gain: 128 or 64 for channel A, 32 for channel B
 		// gain: 128 or 64 for channel A; channel B works with 32 gain factor only
@@ -59,7 +57,7 @@ class HX711 : public ExponentialFilter<long> {
 			GAIN = 1;
 			pinsConfigured = false;
 		};
-		~HX711(){};
+		//~HX711(){};
 		bool is_ready() {
 			if (!pinsConfigured) {
 				// We need to set the pin mode once, but not in the constructor
@@ -68,7 +66,7 @@ class HX711 : public ExponentialFilter<long> {
 				pinsConfigured = true;
 			}
 			return digitalRead(DOUT) == LOW;
-		};		
+		};
 		long read() {
 			// wait for the chip to become ready
 			while (!is_ready());
@@ -92,7 +90,7 @@ class HX711 : public ExponentialFilter<long> {
 			return ((uint32_t) data[2] << 16) | ((uint32_t) data[1] << 8) | (uint32_t) data[0];
 		};
 		void power_down(){digitalWrite(PD_SCK, HIGH);};
-		void power_up(){digitalWrite(PD_SCK, LOW);};		
+		void power_up(){digitalWrite(PD_SCK, LOW);};
 		void reset(){
 			power_down();
 			delayMicroseconds(100);

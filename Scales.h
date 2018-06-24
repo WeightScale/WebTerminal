@@ -65,7 +65,7 @@ class ScalesClass : public Task, HX711{
 		bool _downloadValue();
 
 	public:
-		ScalesClass(AsyncWebServer * server) : Task(200), HX711(PIN_DOUT, PIN_SCK){
+		ScalesClass(AsyncWebServer * server) :Task(200), HX711(PIN_DOUT, PIN_SCK){
 			_server = server;
 			//_authenticated = false;
 			saveWeight.isSave = false;
@@ -100,7 +100,8 @@ class ScalesClass : public Task, HX711{
 		bool saveDate();
 		void saveValueCalibratedHttp(AsyncWebServerRequest * request);
 		void handleSeal(AsyncWebServerRequest * request);
-		int getSeal(){ return _scales_value.seal;};		
+		int getSeal(){ return _scales_value.seal;};
+		void adcOff(){power_down();};
 };
 
 void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len);

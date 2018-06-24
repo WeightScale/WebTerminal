@@ -205,7 +205,8 @@ class BatteryClass : public Task{
 		int _get_adc(byte times = 1);
 	public:
 		BatteryClass(int * s, unsigned int time) : Task(time){
-			_max = s;	
+			_max = s;
+			fetchCharge(1);	
 		};
 		int fetchCharge(int times){
 			_charge = _get_adc(times);

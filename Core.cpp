@@ -11,6 +11,8 @@ IPAddress lanIp;			// Надо сделать настройки ip адреса
 IPAddress gateway;
 
 CoreClass::CoreClass() : TaskController(20000), AsyncWebHandler(){
+	POWER = new PowerClass();
+	BLINK = new BlinkClass();
 	initWiFi();
 	//onRun(bind(&CoreClass::connectSTA, CORE));					/* Пытаемся соедениться с точкой доступа каждые 20 секунд */
 }
@@ -20,11 +22,11 @@ void CoreClass::begin(){
 	initServer();	
 }
 
-void CoreClass::init(){
-	POWER = new PowerClass();
+void CoreClass::init(){	
 	Serial.begin(115200);
 	Serial.println("OK");
 	SPIFFS.begin();
+	RTC.Begin();
 	
 	_downloadHTTPAuth();	
 	_downloadSettings();
@@ -35,9 +37,7 @@ void CoreClass::init(){
 	BATTERY = new BatteryClass(&_settings.bat_max, 20000);
 	if(BATTERY->callibrated()){		
 		saveSettings();
-	};
-	
-	BLINK = new BlinkClass();
+	};	
 	
 	SCALES = new ScalesClass(&server);
 	CONNECT = new Task(bind(&CoreClass::connectSTA, CORE),20000);
@@ -45,7 +45,7 @@ void CoreClass::init(){
 	add(POWER);
 	add(BATTERY);
 	add(BLINK);
-	//add(SCALES);
+	add(SCALES);
 }
 
 void CoreClass::initWiFi(){
@@ -158,9 +158,8 @@ void CoreClass::reconnectWifi(AsyncWebServerRequest * request){
 }
 
 void CoreClass::exit(){
-	//browserServer.stop();
 	SPIFFS.end();
-	//Scale.power_down(); /// Выключаем ацп	
+	SCALES->adcOff(); /// Выключаем ацп	
 	POWER->off();
 	ESP.reset();
 }
@@ -254,7 +253,7 @@ bool CoreClass::_downloadSettings() {
 void CoreClass::handle(){
 	run();
 	dnsServer.processNextRequest();
-	//POWER->checkButtonPressed();
+	POWER->checkButtonPressed();
 	if (SCALES->isSave()){
 		saveEvent("weight", String(SCALES->getSaveValue())+"_kg");
 		SCALES->setIsSave(false);
