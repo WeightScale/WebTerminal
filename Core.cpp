@@ -13,8 +13,7 @@ IPAddress gateway;
 CoreClass::CoreClass() : TaskController(20000), AsyncWebHandler(){
 	POWER = new PowerClass();
 	BLINK = new BlinkClass();
-	initWiFi();
-	//onRun(bind(&CoreClass::connectSTA, CORE));					/* Пытаемся соедениться с точкой доступа каждые 20 секунд */
+	initWiFi();	
 }
 
 void CoreClass::begin(){
@@ -22,9 +21,7 @@ void CoreClass::begin(){
 	initServer();	
 }
 
-void CoreClass::init(){	
-	Serial.begin(115200);
-	Serial.println("OK");
+void CoreClass::init(){		
 	SPIFFS.begin();
 	RTC.Begin();
 	
@@ -51,7 +48,7 @@ void CoreClass::init(){
 void CoreClass::initWiFi(){
 	StModeConnectedHandler = WiFi.onStationModeConnected(bind(&CoreClass::onSTAModeConnected, CORE, _1));
 	StModeDisconnectedHandler = WiFi.onStationModeDisconnected(bind(&CoreClass::onSTAModeDisconnected, CORE, _1));
-		
+	
 	WiFi.persistent(false);
 	WiFi.setAutoConnect(true);
 	WiFi.setAutoReconnect(true);
@@ -118,23 +115,17 @@ void CoreClass::connectSTA(){
 		return;
 	}
 	for (int i = 0; i < n; ++i)	{
-		if(WiFi.SSID(i) == _settings.wSSID.c_str()){
-			String ssid_scan;
-			int32_t rssi_scan;
-			uint8_t sec_scan;
-			uint8_t* BSSID_scan;
-			int32_t chan_scan;
-			bool hidden_scan;
+		if(WiFi.SSID(i) == _settings.wSSID.c_str()){			
+			int32_t chan_scan = WiFi.channel(i);
 			WiFi.setAutoConnect(true);
-			WiFi.setAutoReconnect(true);
-			WiFi.getNetworkInfo(i, ssid_scan, sec_scan, rssi_scan, BSSID_scan, chan_scan, hidden_scan);
+			WiFi.setAutoReconnect(true);			
 			if (!_settings.autoIp){
 				if (lanIp.fromString(_settings.scaleLanIp) && gateway.fromString(_settings.scaleGateway)){					
 					WiFi.config(lanIp,gateway, netMsk);									// Надо сделать настройки ip адреса
 				}
 			}
 			WiFi.softAP(SOFT_AP_SSID, SOFT_AP_PASSWORD, chan_scan); //Устанавливаем канал как роутера
-			WiFi.begin ( _settings.wSSID.c_str(), _settings.wKey.c_str(),chan_scan,BSSID_scan);
+			WiFi.begin ( _settings.wSSID.c_str(), _settings.wKey.c_str(),chan_scan);
 			int status = WiFi.waitForConnectResult();
 			if(status == WL_CONNECTED ){
 				NBNS.begin(MY_HOST_NAME);
@@ -262,16 +253,18 @@ void CoreClass::handle(){
 
 void CoreClass::onSTAModeConnected(const WiFiEventStationModeConnected& evt) {
 	CONNECT->pause();
-	BLINK->_flash = 50;
-	BLINK->_blink = 3000;
+	BLINK->onRun(bind(&BlinkClass::blinkSTA,BLINK));
+	//BLINK->_flash = 50;
+	//BLINK->_blink = 3000;
 }
 
 void CoreClass::onSTAModeDisconnected(const WiFiEventStationModeDisconnected& evt) {
 	WiFi.scanDelete();
 	WiFi.scanNetworks(true);
 	CONNECT->resume();
-	BLINK->_flash = 500;
-	BLINK->_blink = 500;
+	BLINK->onRun(bind(&BlinkClass::blinkAP,BLINK));
+	//BLINK->_flash = 500;
+	//BLINK->_blink = 500;
 }
 
 bool CoreClass::canHandle(AsyncWebServerRequest *request){

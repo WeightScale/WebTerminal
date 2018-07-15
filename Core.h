@@ -182,19 +182,31 @@ class PowerClass : public Task{
 };
 
 class BlinkClass : public Task{
-	public:
-		unsigned int _flash = 500;
-		unsigned int _blink = 500;
+	private:
+		unsigned int _flash = 500;		
 	public:
 		BlinkClass() : Task(500){
-			pinMode(LED, OUTPUT);	
+			pinMode(LED, OUTPUT);
+			onRun(std::bind(&BlinkClass::blinkAP,this));	
 		};
-		void run(){
+		void blinkSTA(){
+			static unsigned char clk;		
 			bool led = !digitalRead(LED);
 			digitalWrite(LED, led);
-			setInterval(led ? _blink : _flash);
-			
-			runned();
+			if (clk < 6){
+				led ? _flash = 70 : _flash = 40;
+				clk++;
+			}else{
+				_flash = 2000;
+				digitalWrite(LED, HIGH);
+				clk = 0;
+			}
+			setInterval(_flash);
+		}
+		void blinkAP(){
+			bool led = !digitalRead(LED);
+			digitalWrite(LED, led);
+			setInterval(500);
 		}
 };
 
@@ -250,12 +262,13 @@ class DataTimeClass : public RtcDS1307<TwoWire>{
 			char datestring[20];
 			RtcDateTime now = GetDateTime();
 			snprintf(datestring, countof(datestring),"%04u.%02u.%02u-%02u:%02u:%02u",
-			now.Year(),
-			now.Month(),
-			now.Day(),
-			now.Hour(),
-			now.Minute(),
-			now.Second() );
+				now.Year(),
+				now.Month(),
+				now.Day(),
+				now.Hour(),
+				now.Minute(),
+				now.Second() 
+			);
 			return String(datestring);
 		}	
 			
