@@ -4,7 +4,7 @@
  * Created: 20.05.2018 10:02:25
  *  Author: Kostya
  */ 
-#include "Arduino.h"
+//#include "Arduino.h"
 #include "Core.h"
 
 //

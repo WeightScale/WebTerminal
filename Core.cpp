@@ -1,4 +1,5 @@
 ﻿#include "Core.h"
+#include <AsyncJson.h>
 #include "ESP8266NetBIOS.h"
 
 using namespace std;
@@ -24,16 +25,20 @@ void CoreClass::begin(){
 void CoreClass::init(){		
 	SPIFFS.begin();
 	RTC.Begin();
+	CoreMemory.init();
+	
+	_settings = &CoreMemory.eeprom.settings;
 	
 	_downloadHTTPAuth();	
-	_downloadSettings();
+	//_downloadSettings();
 	
-	POWER->setInterval(_settings.time_off);
+	POWER->setInterval(_settings->time_off);
 	POWER->onRun(bind(&CoreClass::exit,CORE));
 	
-	BATTERY = new BatteryClass(&_settings.bat_max, 20000);
-	if(BATTERY->callibrated()){		
-		saveSettings();
+	BATTERY = new BatteryClass(&_settings->bat_max, 20000);
+	if(BATTERY->callibrated()){
+		CoreMemory.save();		
+		//saveSettings();
 	};	
 	
 	SCALES = new ScalesClass(&server);
@@ -71,10 +76,33 @@ void CoreClass::initServer(){
 	
 	server.on("/rc", bind(&CoreClass::reconnectWifi, CORE, _1));																		/* Пересоединиться по WiFi. */
 	server.on("/sv", bind(&CoreClass::handleScaleProp, CORE, _1));																												/* Получить значения. */
-	server.on("/settings.json",HTTP_ANY, [this](AsyncWebServerRequest * reguest){
-		if (!isAuthentified(reguest))
-			return reguest->requestAuthentication();		
-		reguest->send(SPIFFS, reguest->url());	
+	server.on("/settings.json",HTTP_ANY, [this](AsyncWebServerRequest * request){
+		if (!isAuthentified(request))
+			return request->requestAuthentication();
+		AsyncResponseStream *response = request->beginResponseStream("application/json");
+		DynamicJsonBuffer jsonBuffer;
+		JsonObject &root = jsonBuffer.createObject();
+		JsonObject& scale = root.createNestedObject(SCALE_JSON);
+		scale["id_n_admin"] = _settings->scaleName;
+		scale["id_p_admin"] = _settings->scalePass;
+		scale["id_auto"] = _settings->autoIp;
+		scale["id_lan_ip"] = _settings->scaleLanIp;
+		scale["id_gateway"] = _settings->scaleGateway;
+		scale["id_subnet"] = _settings->scaleSubnet;
+		scale["id_ssid"] = String(_settings->wSSID);
+		scale["id_key"] = String(_settings->wKey);
+		scale["bat_max"] = _settings->bat_max;
+		scale["id_pe"] = _settings->power_time_enable;
+		scale["id_pt"] = _settings->time_off;
+		
+		JsonObject& server = root.createNestedObject(SERVER_JSON);
+		server["id_host"] = String(_settings->hostUrl);
+		server["id_pin"] = _settings->hostPin;
+		server["timeout"] = _settings->timeout;
+		
+		root.printTo(*response);
+		request->send(response);		
+		//reguest->send(SPIFFS, reguest->url());	
 	});
 	server.on("/secret.json",[this](AsyncWebServerRequest * reguest){
 		if (!reguest->authenticate(_httpAuth.wwwUsername.c_str(), _httpAuth.wwwPassword.c_str()))
@@ -83,6 +111,7 @@ void CoreClass::initServer(){
 	});
 	#ifdef HTML_PROGMEM
 		server.on("/",[](AsyncWebServerRequest * reguest){	reguest->send_P(200,F("text/html"),index_html);});								/* Главная страница. */
+		server.on("/global.css",[](AsyncWebServerRequest * reguest){	reguest->send_P(200,F("text/css"),global_css);});					/* Стили */
 		server.rewrite("/sn", "/settings.html");
 		server.serveStatic("/", SPIFFS, "/");
 	#else	
@@ -108,24 +137,24 @@ void CoreClass::connectSTA(){
 		goto scan;
 	}
 	connect:
-	if (_settings.wSSID.length()==0){
+	if (String(_settings->wSSID).length()==0){
 		WiFi.setAutoConnect(false);
 		WiFi.setAutoReconnect(false);
 		CONNECT->pause();
 		return;
 	}
 	for (int i = 0; i < n; ++i)	{
-		if(WiFi.SSID(i) == _settings.wSSID.c_str()){			
+		if(WiFi.SSID(i).equals(_settings->wSSID)){			
 			int32_t chan_scan = WiFi.channel(i);
 			WiFi.setAutoConnect(true);
 			WiFi.setAutoReconnect(true);			
-			if (!_settings.autoIp){
-				if (lanIp.fromString(_settings.scaleLanIp) && gateway.fromString(_settings.scaleGateway)){					
+			if (!_settings->autoIp){
+				if (lanIp.fromString(_settings->scaleLanIp) && gateway.fromString(_settings->scaleGateway)){					
 					WiFi.config(lanIp,gateway, netMsk);									// Надо сделать настройки ip адреса
 				}
 			}
 			WiFi.softAP(SOFT_AP_SSID, SOFT_AP_PASSWORD, chan_scan); //Устанавливаем канал как роутера
-			WiFi.begin ( _settings.wSSID.c_str(), _settings.wKey.c_str(),chan_scan);
+			WiFi.begin ( _settings->wSSID, _settings->wKey,chan_scan);
 			int status = WiFi.waitForConnectResult();
 			if(status == WL_CONNECTED ){
 				NBNS.begin(MY_HOST_NAME);
@@ -155,6 +184,7 @@ void CoreClass::exit(){
 	ESP.reset();
 }
 
+/*
 bool CoreClass::saveSettings() {
 	
 	DynamicJsonBuffer jsonBuffer;
@@ -188,8 +218,9 @@ bool CoreClass::saveSettings() {
 	serverFile.flush();
 	serverFile.close();
 	return true;
-}
+}*/
 
+/*
 bool CoreClass::_downloadSettings() {
 	_settings.scaleName = "admin";
 	_settings.scalePass = "1234";
@@ -239,7 +270,7 @@ bool CoreClass::_downloadSettings() {
 		_settings.timeout = json[SERVER_JSON]["timeout"];
 	}
 	return true;
-}
+}*/
 
 void CoreClass::handle(){
 	run();
@@ -279,7 +310,7 @@ bool CoreClass::canHandle(AsyncWebServerRequest *request){
 	else
 		return false;
 	auth:
-	if (!request->authenticate(_settings.scaleName.c_str(), _settings.scalePass.c_str())){
+	if (!request->authenticate(_settings->scaleName, _settings->scalePass)){
 		if(!request->authenticate(_username.c_str(), _password.c_str())){
 			request->requestAuthentication();
 			return false;
@@ -293,19 +324,19 @@ void CoreClass::handleRequest(AsyncWebServerRequest *request){
 		String message = " ";
 		if (request->hasArg("ssid")){
 			if (request->hasArg("auto"))
-				_settings.autoIp = true;
+				_settings->autoIp = true;
 			else
-				_settings.autoIp = false;
-			_settings.scaleLanIp = request->arg("lan_ip");
-			_settings.scaleGateway = request->arg("gateway");
-			_settings.scaleSubnet = request->arg("subnet");
-			_settings.wSSID = request->arg("ssid");
-			if(_settings.wSSID.length()>0){
+				_settings->autoIp = false;
+			request->arg("lan_ip").toCharArray(_settings->scaleLanIp,request->arg("lan_ip").length()+1);
+			request->arg("gateway").toCharArray(_settings->scaleGateway,request->arg("gateway").length()+1);
+			request->arg("subnet").toCharArray(_settings->scaleSubnet,request->arg("subnet").length()+1);
+			request->arg("ssid").toCharArray(_settings->wSSID,request->arg("ssid").length()+1);
+			if(String(_settings->wSSID).length()>0){
 				CONNECT->resume();
 			}else{
 				CONNECT->pause();
 			}
-			_settings.wKey = request->arg("key");
+			request->arg("key").toCharArray(_settings->wKey, request->arg("key").length()+1);
 			goto save;
 		}
 		if(request->hasArg("data")){
@@ -314,25 +345,25 @@ void CoreClass::handleRequest(AsyncWebServerRequest *request){
 			return;
 		}
 		if (request->hasArg("host")){
-			_settings.hostUrl = request->arg("host");
-			_settings.hostPin = request->arg("pin").toInt();
+			request->arg("host").toCharArray(_settings->hostUrl, request->arg("host").length()+1);
+			_settings->hostPin = request->arg("pin").toInt();
 			goto save;
 		}
 		if (request->hasArg("n_admin")){
-			_settings.scaleName = request->arg("n_admin");
-			_settings.scalePass = request->arg("p_admin");
+			request->arg("n_admin").toCharArray(_settings->scaleName,request->arg("n_admin").length()+1);
+			request->arg("p_admin").toCharArray(_settings->scalePass,request->arg("p_admin").length()+1);
 			goto save;
 		}
 		if (request->hasArg("pt")){
 			if (request->hasArg("pe"))
-				POWER->enabled = _settings.power_time_enable = true;
+				POWER->enabled = _settings->power_time_enable = true;
 			else
-				POWER->enabled = _settings.power_time_enable = false;
-			_settings.time_off = request->arg("pt").toInt();
+				POWER->enabled = _settings->power_time_enable = false;
+			_settings->time_off = request->arg("pt").toInt();
 			goto save;
 		}
 		save:
-		if (saveSettings()){
+		if (CoreMemory.save()){
 			goto url;
 		}
 		return request->send(400);
@@ -398,7 +429,7 @@ bool CoreClass::checkAdminAuth(AsyncWebServerRequest * r) {
 }
 
 bool CoreClass::isAuthentified(AsyncWebServerRequest * request){
-	if (!request->authenticate(_settings.scaleName.c_str(), _settings.scalePass.c_str())){
+	if (!request->authenticate(_settings->scaleName, _settings->scalePass)){
 		if (!checkAdminAuth(request)){
 			return false;
 		}
@@ -443,15 +474,15 @@ String CoreClass::getHash(const int code, const String& date, const String& type
 }
 
 bool CoreClass::eventToServer(const String& date, const String& type, const String& value){
-	if(_settings.hostPin == 0)
+	if(_settings->hostPin == 0)
 	return false;
 	HTTPClient http;
 	String message = "http://";
-	message += _settings.hostUrl.c_str();
-	String hash = getHash(_settings.hostPin, date, type, value);
+	message += _settings->hostUrl;
+	String hash = getHash(_settings->hostPin, date, type, value);
 	message += "/scales.php?hash=" + hash;
 	http.begin(message);
-	http.setTimeout(_settings.timeout);
+	http.setTimeout(_settings->timeout);
 	int httpCode = http.GET();
 	http.end();
 	if(httpCode == HTTP_CODE_OK) {
